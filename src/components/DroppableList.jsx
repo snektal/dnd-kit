@@ -1,50 +1,21 @@
-// DroppableList.jsx
 import React from "react";
-import { useDrop } from "react-dnd";
+import DroppableItem from "./DroppableItem";
 
-const DroppableList = ({ items, onDrop }) => {
-  const [, drop] = useDrop({
-    accept: "DRAGGABLE_ITEM",
-    drop: (draggedItem) => {
-      //   onDrop(draggedItem.draggedItem, items[0]); // Assume there is only one droppable item in this example
-      onDrop(
-        draggedItem.draggedItem,
-        items.find(
-          (droppableItem) => droppableItem.id === draggedItem.draggedItem.id
-        )
-      );
-    },
-  });
-
+const DroppableList = ({ items, relationships, onDragOver, onDrop }) => {
   return (
-    <div ref={drop} style={{ marginLeft: "20px" }}>
-      <h2>Droppable List</h2>
-      {items.map((item) => (
-        <DroppableItem key={item.id} item={item} />
-      ))}
-    </div>
-  );
-};
-
-const DroppableItem = ({ item }) => {
-  function handleOnDrag(event) {
-    event.target.style.backgroundColor = "red";
-    alert(event.target.style.backgroundColor);
-  }
-
-  return (
-    <div
-      onDragEnter={() => handleOnDrag}
-      style={{
-        marginBottom: "8px",
-        padding: "8px",
-        border: "1px solid black",
-        backgroundColor: item.backgroundColor || "white",
-        color: "black",
-      }}
+    <ul
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      style={{ border: "1px solid #ccc", minHeight: "100px" }}
     >
-      {item.content}
-    </div>
+      {items.map((droppableItem, index) => (
+        <DroppableItem
+          key={index}
+          droppableItem={droppableItem}
+          relationships={relationships}
+        />
+      ))}
+    </ul>
   );
 };
 

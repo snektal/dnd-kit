@@ -1,115 +1,71 @@
-// MyComponent.jsx
 import React, { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import DraggableList from "./DraggableList";
 import DroppableList from "./DroppableList";
 
-const MyComponent = () => {
-  const [draggableItems, setDraggableItems] = useState([
-    {
-      id: 1,
-      content: "Draggable Item 1",
-      backgroundColor: "white",
-      droppableItemId: -1,
-    },
-    {
-      id: 2,
-      content: "Draggable Item 2",
-      backgroundColor: "white",
-      droppableItemId: -1,
-    },
-    {
-      id: 3,
-      content: "Draggable Item 3",
-      backgroundColor: "white",
-      droppableItemId: -1,
-    },
+const TwoListsComponent = () => {
+  const [draggableList, setDraggableList] = useState([
+    "Item A",
+    "Item B",
+    "Item C",
   ]);
-
-  const [droppableItems, setDroppableItems] = useState([
-    {
-      id: 1,
-      content: "Droppable Item 1",
-      backgroundColor: "white",
-      draggedItemId: -1,
-    },
-    {
-      id: 2,
-      content: "Droppable Item 2",
-      backgroundColor: "white",
-      draggedItemId: -1,
-    },
-    {
-      id: 3,
-      content: "Droppable Item 3",
-      backgroundColor: "white",
-      draggedItemId: -1,
-    },
+  const [droppableList, setDroppableList] = useState([
+    "Item 1",
+    "Item 2",
+    "Item 3",
+    "Item 4",
+    "Item 5",
   ]);
+  const [relationships, setRelationships] = useState([]);
 
-  const handleDrop = (draggedItem, droppableItem) => {
-    // Change the background color of both items
-    setDraggableItems((items) =>
-      items.map((item) => {
-        if (
-          draggedItem.id === item.id &&
-          item.droppableItemId === droppableItem.id
-        ) {
-          console.log(
-            "draggedItem.id === item.id && item.droppableItemId === droppableItem.id"
-          );
-        }
+  const handleDragStart = (e, item) => {
+    e.dataTransfer.setData("text/plain", item);
+  };
 
-        if (draggedItem.id !== item.id && item.droppableItemId !== -1) {
-          console.log(
-            "draggedItem.id !== item.id && item.droppableItemId !== -1"
-          );
-        }
-        console.log("draggedItem.id", draggedItem.id);
-        console.log("item.id", item.id);
-        console.log("droppableItem.id", droppableItem.id);
-        console.log("item.droppableItemId", item.droppableItemId);
-        // draggedItem.id === item.id && item.droppableItemId === droppableItem.id
-        //   ? {
-        //       ...item,
-        //       backgroundColor: "lightblue",
-        //       droppableItemId: droppableItem.id,
-        //     }
-        //   : { ...item, backgroundColor: "white", droppableItemId: -1 };
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
-        // draggedItem.id !== item.id && item.droppableItemId !== -1
-        //   ? {
-        //       ...item,
-        //       backgroundColor: "lightblue",
-        //       droppableItemId: droppableItem.id,
-        //     }
-        //   : { ...item, backgroundColor: "white", droppableItemId: -1 };
-      })
+  const handleDrop = (e, droppableItem) => {
+    const draggableItem = e.dataTransfer.getData("text/plain");
+    console.log("before ", draggableItem, droppableItem);
+
+    const updatedRelationships = relationships.filter(
+      (relationship) => relationship.draggableItem !== draggableItem
     );
 
-    setDroppableItems((items) =>
-      items.map((item) =>
-        droppableItem.id === item.id ||
-        (item.draggedItemId !== draggedItem.id && item.draggedItemId !== -1)
-          ? {
-              ...item,
-              backgroundColor: "lightblue",
-              draggedItemId: draggedItem.id,
-            }
-          : { ...item, backgroundColor: "white", draggedItemId: -1 }
-      )
-    );
+    setRelationships([
+      ...updatedRelationships,
+      { draggableItem, droppableItem },
+    ]);
+    console.log("after ", draggableItem, droppableItem);
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div style={{ display: "flex" }}>
-        <DraggableList items={draggableItems} />
-        <DroppableList items={droppableItems} onDrop={handleDrop} />
+    <div>
+      <div>
+        <h2>Draggable List</h2>
+        <DraggableList
+          items={draggableList}
+          relationships={relationships}
+          onDragStart={handleDragStart}
+        />
       </div>
-    </DndProvider>
+
+      <div>
+        <h2>Droppable List</h2>
+        <DroppableList
+          items={droppableList}
+          relationships={relationships}
+          onDragOver={handleDragOver}
+          onDrop={(e) => {
+            e.preventDefault();
+            const droppableItem = e.target.textContent;
+            handleDrop(e, droppableItem);
+          }}
+        />
+      </div>
+    </div>
   );
 };
 
-export default MyComponent;
+export default TwoListsComponent;

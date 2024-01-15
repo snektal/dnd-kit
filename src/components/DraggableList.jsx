@@ -1,42 +1,18 @@
-// DraggableList.jsx
 import React from "react";
-import { useDrag } from "react-dnd";
+import DraggableItem from "./DraggableItem";
 
-const DraggableList = ({ items }) => {
+const DraggableList = ({ items, relationships, onDragStart }) => {
   return (
-    <div>
-      <h2>Draggable List</h2>
-      {items.map((item, index) => (
-        <DraggableItem key={index} item={item} />
+    <ul>
+      {items.map((draggableItem, index) => (
+        <DraggableItem
+          key={index}
+          draggableItem={draggableItem}
+          relationships={relationships}
+          onDragStart={onDragStart}
+        />
       ))}
-    </div>
-  );
-};
-
-const DraggableItem = ({ item }) => {
-  const [{ isDragging }, drag] = useDrag({
-    type: "DRAGGABLE_ITEM",
-    item: { draggedItem: item },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  });
-
-  return (
-    <div
-      ref={drag}
-      style={{
-        opacity: isDragging ? 0.5 : 1,
-        cursor: "move",
-        marginBottom: "8px",
-        padding: "8px",
-        border: "1px solid black",
-        backgroundColor: item.backgroundColor || "white",
-        color: "black",
-      }}
-    >
-      {item.content}
-    </div>
+    </ul>
   );
 };
 

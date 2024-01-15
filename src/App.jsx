@@ -41,6 +41,7 @@ const App = () => {
     <div>
       <h1>Drag and Drop Example</h1>
       <MyComponent />
+      {/* <TwoListsComponent /> */}
       <div className="container">
         <h1 className="text-center">Drag and Drop Test</h1>
         {/* <DropzoneContext.Provider value={setFileContents}> */}
@@ -64,7 +65,7 @@ const App = () => {
                 // }}
               />
               {isDragActive
-                ? "Drop it here"
+                ? "Drop Json file here"
                 : "Click here or drag a file to dashed box"}
             </div>
           )}
